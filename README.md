@@ -1,3 +1,8 @@
+# このプロジェクトについて
+forked from https://github.com/llvm/llvm-project
+
+関数単位で最適化を効かせる目的でLLVMを改変しています。現在制作途中なので随時更新されます/テスト用の出力があります
+
 # The LLVM Compiler Infrastructure
 
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/llvm/llvm-project/badge)](https://securityscorecards.dev/viewer/?uri=github.com/llvm/llvm-project)

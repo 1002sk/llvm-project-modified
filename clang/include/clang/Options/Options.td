@@ -9825,3 +9825,13 @@ def wasm_opt : Flag<["--"], "wasm-opt">,
   Group<m_Group>,
   HelpText<"Enable the wasm-opt optimizer (default)">,
   MarshallingInfoNegativeFlag<LangOpts<"NoWasmOpt">>;
+
+
+
+/*
+  My options
+*/
+def func_opt : Separate<["-"], "func-opt">,
+  MetaVarName<"<string>">, Group<CompileOnly_Group>,
+  Visibility<[ClangOption, CC1Option]>,
+  HelpText<"function-grain optimization: input info like this: \"FUNCTION_NAME1 OPT1 OPT2 ... OPTn; FUNCTION_NAME2 ...\"">;

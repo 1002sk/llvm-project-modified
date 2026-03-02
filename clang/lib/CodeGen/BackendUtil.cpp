@@ -86,6 +86,7 @@
 #include "llvm/Transforms/Instrumentation/ThreadSanitizer.h"
 #include "llvm/Transforms/Instrumentation/TypeSanitizer.h"
 #include "llvm/Transforms/ObjCARC.h"
+#include "llvm/Transforms/FunctionOpt/FunctionOpt.h"
 #include "llvm/Transforms/Scalar/EarlyCSE.h"
 #include "llvm/Transforms/Scalar/GVN.h"
 #include "llvm/Transforms/Scalar/JumpThreading.h"
@@ -121,6 +122,14 @@ static cl::opt<PGOOptions::ColdFuncOpt> ClPGOColdFuncAttr(
                           "Mark cold functions with minsize."),
                clEnumValN(PGOOptions::ColdFuncOpt::OptNone, "optnone",
                           "Mark cold functions with optnone.")));
+
+        static cl::opt<bool> ClEnableFunctionOptPass(
+          "enable-function-opt-pass", cl::Hidden, cl::init(false),
+          cl::desc("Enable FunctionOptPass in clang backend pipeline"));
+
+        static cl::opt<std::string> ClFunctionOptPassOption(
+          "function-opt-pass-option", cl::Hidden, cl::init(""),
+          cl::desc("String option passed to FunctionOptPass"));
 
 LLVM_ABI extern cl::opt<InstrProfCorrelator::ProfCorrelatorKind>
     ProfileCorrelate;
@@ -1019,6 +1028,13 @@ void EmitAssemblyHelper::RunOptimizationPipeline(
           [](FunctionPassManager &FPM, OptimizationLevel Level) {
             if (Level != OptimizationLevel::O0)
               FPM.addPass(ObjCARCOptPass());
+          });
+    }
+
+    if (ClEnableFunctionOptPass || !ClFunctionOptPassOption.empty()) {
+      PB.registerOptimizerLastEPCallback(
+          [](ModulePassManager &MPM, OptimizationLevel, ThinOrFullLTOPhase) {
+            MPM.addPass(FunctionOptPass(ClFunctionOptPassOption));
           });
     }
 

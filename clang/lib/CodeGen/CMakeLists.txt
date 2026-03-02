@@ -13,6 +13,7 @@ set(LLVM_LINK_COMPONENTS
   FrontendHLSL
   FrontendOpenMP
   FrontendOffloading
+  FunctionOpt
   HIPStdPar
   IPO
   IRPrinter

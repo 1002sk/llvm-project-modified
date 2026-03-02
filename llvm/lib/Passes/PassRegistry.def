@@ -81,6 +81,7 @@ MODULE_PASS("extract-blocks", BlockExtractorPass({}, false))
 MODULE_PASS("expand-variadics",
             ExpandVariadicsPass(ExpandVariadicsMode::Disable))
 MODULE_PASS("forceattrs", ForceFunctionAttrsPass())
+MODULE_PASS("function-opt", FunctionOptPass())
 MODULE_PASS("function-import", FunctionImportPass())
 MODULE_PASS("global-merge-func", GlobalMergeFuncPass())
 MODULE_PASS("globalopt", GlobalOptPass())

@@ -3,6 +3,10 @@ forked from https://github.com/llvm/llvm-project
 
 関数単位で最適化を効かせる目的でLLVMを改変しています。現在制作途中なので随時更新されます/テスト用の出力があります
 
+Usage: `./build/bin/clang ... -mllvm -functino-opt-pass-option="FORMAT"`
+
+フォーマットは `FunctionName opt1 opt2 ... optN; FunctionName2 opt1 opt2 ... optN;`
+
 # The LLVM Compiler Infrastructure
 
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/llvm/llvm-project/badge)](https://securityscorecards.dev/viewer/?uri=github.com/llvm/llvm-project)

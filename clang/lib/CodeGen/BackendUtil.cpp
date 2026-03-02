@@ -1032,7 +1032,7 @@ void EmitAssemblyHelper::RunOptimizationPipeline(
     }
 
     if (ClEnableFunctionOptPass || !ClFunctionOptPassOption.empty()) {
-      PB.registerOptimizerLastEPCallback(
+      PB.registerOptimizerEarlyEPCallback(
           [](ModulePassManager &MPM, OptimizationLevel, ThinOrFullLTOPhase) {
             MPM.addPass(FunctionOptPass(ClFunctionOptPassOption));
           });

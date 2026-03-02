@@ -28,7 +28,7 @@ Function* findFunctionByName(Module &M, const std::string &name, const bool &deb
         return F;
     }
     if(debug_mode)
-        llvm::outs() << "Function " << name << " not found in module\n";
+        llvm::outs() << "Function " << name << " not found in the module\n";
     return nullptr;
 }
 
@@ -36,9 +36,8 @@ void parseArgFunction(std::string &arg, Module &M, ModuleAnalysisManager &MAM, c
     auto pos = arg.find(" ");
     std::string function_name = arg.substr(0, pos);
     Function *F = findFunctionByName(M, function_name, debug_mode);
-    if(F != nullptr){
+    if(F != nullptr)
         llvm::outs() << "Found! Function name: " << function_name << "\n";
-    }
     return;
 }
 
@@ -52,9 +51,6 @@ void parseArg(std::string arg, Module &M, ModuleAnalysisManager &MAM){
         llvm::outs() << "Debug output enabled\n";
         arg = arg.erase(0, 1);
         debug_mode = true;
-        for(Function &F : M){
-            llvm::outs() << "Function name: " << F.getName() << "\n";
-        }
     }
     auto pos = arg.find(";");
     while(pos != std::string::npos){

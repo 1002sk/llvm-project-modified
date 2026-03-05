@@ -10,5 +10,6 @@ add_llvm_component_library(LLVMFunctionOpt
 
   LINK_COMPONENTS
   Core
+  Passes
   Support
   )

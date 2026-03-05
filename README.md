@@ -5,7 +5,15 @@ forked from https://github.com/llvm/llvm-project
 
 Usage: `./build/bin/clang ... -mllvm -functino-opt-pass-option="FORMAT"`
 
-フォーマットは `FunctionName opt1 opt2 ... optN; FunctionName2 opt1 opt2 ... optN;`
+フォーマットは `FunctionName opt1 opt2 ... optN;FunctionName2 opt1 opt2 ... optN;`
+
+効果を確かめたい時は`-O0 -Xclang -disable-O0-optnone`を使うとO0に指定した最適化のみを有効にできる
+
+現在対応しているものはInstSimplifyPass, DSEPass, AggressiveInstCombinePassのみ(to do 追加する)
+
+## 実装方法
+llvm/lib/Transforms/FunctionOpt にパスの形で実装
+内部でFunctionPassManagerを生成して呼び出している
 
 # The LLVM Compiler Infrastructure
 

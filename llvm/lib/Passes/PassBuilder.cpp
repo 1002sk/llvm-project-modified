@@ -851,6 +851,10 @@ Expected<bool> parseGlobalDCEPassOptions(StringRef Params) {
       Params, "vfe-linkage-unit-visibility", "GlobalDCE");
 }
 
+Expected<std::string> parseFunctionOptPassOptions(StringRef Params) {
+  return Params.str();
+}
+
 Expected<bool> parseCGProfilePassOptions(StringRef Params) {
   return PassBuilder::parseSinglePassOption(Params, "in-lto-post-link",
                                             "CGProfile");

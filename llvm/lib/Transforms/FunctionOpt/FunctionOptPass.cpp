@@ -1,12 +1,6 @@
 //===- FunctionOptPass.cpp - FunctionOpt module pass ---------------------===//
-//
-// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
-// See https://llvm.org/LICENSE.txt for license information.
-// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
-//
-//===----------------------------------------------------------------------===//
 
-// memo: -13
+
 
 #include "llvm/Transforms/FunctionOpt/FunctionOpt.h"
 #include "llvm/Passes/PassBuilder.h"
@@ -14,65 +8,64 @@
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Support/TypeName.h"
 
-// AggressiveInstCombinePass
-#include "llvm/Transforms/AggressiveInstCombine/AggressiveInstCombine.h"
-// CoroElidePass
-#include "llvm/Transforms/Coroutines/CoroElide.h"
-// InstCombinePass
-#include "llvm/Transforms/InstCombine/InstCombine.h"
 // ADCEPass
 #include "llvm/Transforms/Scalar/ADCE.h"
-// AlignmentFromAssumptionPass
+// AddDiscriminatorsPass
+#include "llvm/Transforms/Utils/AddDiscriminators.h"
+// AggressiveInstCombinePass
+#include "llvm/Transforms/AggressiveInstCombine/AggressiveInstCombine.h"
+// AlignmentFromAssumptionsPass
 #include "llvm/Transforms/Scalar/AlignmentFromAssumptions.h"
-// AnnotationRemarksPass
-#include "llvm/Transforms/Scalar/AnnotationRemarks.h"
 // BDCEPass
 #include "llvm/Transforms/Scalar/BDCE.h"
+// BreakCriticalEdgesPass
+#include "llvm/Transforms/Utils/BreakCriticalEdges.h"
 // CallSiteSplittingPass
 #include "llvm/Transforms/Scalar/CallSiteSplitting.h"
 // ConstantHoistingPass
 #include "llvm/Transforms/Scalar/ConstantHoisting.h"
-// ConstraintEliminationPass
-#include "llvm/Transforms/Scalar/ConstraintElimination.h"
+// CoroElidePass
+#include "llvm/Transforms/Coroutines/CoroElide.h"
 // CorrelatedValuePropagationPass
 #include "llvm/Transforms/Scalar/CorrelatedValuePropagation.h"
 // DCEPass
-// RedundantDbgInstEliminationPass
 #include "llvm/Transforms/Scalar/DCE.h"
-// DSEPass
-#include "llvm/Transforms/Scalar/DeadStoreElimination.h"
-// DFAJumpThreadingPass
-#include "llvm/Transforms/Scalar/DFAJumpThreading.h"
 // DivRemPairsPass
 #include "llvm/Transforms/Scalar/DivRemPairs.h"
-// DropUnnecessaryAssumesPass
-#include "llvm/Transforms/Scalar/DropUnnecessaryAssumes.h"
+// DSEPass
+#include "llvm/Transforms/Scalar/DeadStoreElimination.h"
 // EarlyCSEPass
 #include "llvm/Transforms/Scalar/EarlyCSE.h"
+// EntryExitInstrumenterPass
+#include "llvm/Transforms/Utils/EntryExitInstrumenter.h"
 // FlattenCFGPass
 #include "llvm/Transforms/Scalar/FlattenCFG.h"
 // Float2IntPass
 #include "llvm/Transforms/Scalar/Float2Int.h"
 // GuardWideningPass
 #include "llvm/Transforms/Scalar/GuardWidening.h"
-// GVNPass
-// GVNHoistPass
-// GVNSinkPass
+// GVNPass, GVNHoistPass, GVNSinkPass
 #include "llvm/Transforms/Scalar/GVN.h"
-// IRCEPass
-#include "llvm/Transforms/Scalar/InductiveRangeCheckElimination.h"
-// InferAddressSPacesPass
+// InferAddressSpacesPass
 #include "llvm/Transforms/Scalar/InferAddressSpaces.h"
-// InferAlignmentPass
-#include "llvm/Transforms/Scalar/InferAlignment.h"
+// InjectTLIMappings
+#include "llvm/Transforms/Utils/InjectTLIMappings.h"
+// InstCombinePass
+#include "llvm/Transforms/InstCombine/InstCombine.h"
+// InstructionNamerPass
+#include "llvm/Transforms/Utils/InstructionNamer.h"
 // InstSimplifyPass
 #include "llvm/Transforms/Scalar/InstSimplifyPass.h"
-// JumpTableToSwitchPass
-#include "llvm/Transforms/Scalar/JumpTableToSwitch.h"
+// IRCEPass
+#include "llvm/Transforms/Scalar/InductiveRangeCheckElimination.h"
 // JumpThreadingPass
 #include "llvm/Transforms/Scalar/JumpThreading.h"
-// LoopAccessInfoPrinterPass
-#include "llvm/Transforms/Scalar/LoopAccessAnalysisPrinter.h"
+// LCSSAPass
+#include "llvm/Transforms/Utils/LCSSA.h"
+// LibCallsShrinkWrapPass
+#include "llvm/Transforms/Utils/LibCallsShrinkWrap.h"
+// LoadStoreVectorizerPass
+#include "llvm/Transforms/Vectorize/LoadStoreVectorizer.h"
 // LoopDataPrefetchPass
 #include "llvm/Transforms/Scalar/LoopDataPrefetch.h"
 // LoopDistributePass
@@ -81,14 +74,16 @@
 #include "llvm/Transforms/Scalar/LoopFuse.h"
 // LoopLoadEliminationPass
 #include "llvm/Transforms/Scalar/LoopLoadElimination.h"
-// LoopPassManager (just a pass manager, not a pass): Loop -> Function
-#include "llvm/Transforms/Scalar/LoopPassManager.h"
+// LoopSimplifyPass
+#include "llvm/Transforms/Utils/LoopSimplify.h"
 // LoopSinkPass
 #include "llvm/Transforms/Scalar/LoopSink.h"
 // LoopUnrollPass
 #include "llvm/Transforms/Scalar/LoopUnrollPass.h"
-// LowerAtomicPass
-#include "llvm/Transforms/Scalar/LowerAtomicPass.h"
+// LoopVectorizePass
+#include "llvm/Transforms/Vectorize/LoopVectorize.h"
+// LoopVersioningPass
+#include "llvm/Transforms/Utils/LoopVersioning.h"
 // LowerConstantIntrinsicsPass
 #include "llvm/Transforms/Scalar/LowerConstantIntrinsics.h"
 // LowerExpectIntrinsicPass
@@ -99,28 +94,30 @@
 #include "llvm/Transforms/Scalar/LowerMatrixIntrinsics.h"
 // LowerWidenableConditionPass
 #include "llvm/Transforms/Scalar/LowerWidenableCondition.h"
-// MakeGuarsExplicitPass
-#include "llvm/Transforms/Scalar/MakeGuardsExplicit.h"
+// LowerInvokePass
+#include "llvm/Transforms/Utils/LowerInvoke.h"
+// LowerSwitchPass
+#include "llvm/Transforms/Utils/LowerSwitch.h"
 // MemCpyOptPass
 #include "llvm/Transforms/Scalar/MemCpyOptimizer.h"
-// MergedLoadStoreMotionPass
-#include "llvm/Transforms/Scalar/MergedLoadStoreMotion.h"
 // MergeICmpsPass
 #include "llvm/Transforms/Scalar/MergeICmps.h"
+// UnifyFunctionExitNodesPass
+#include "llvm/Transforms/Utils/UnifyFunctionExitNodes.h"
+// MergedLoadStoreMotionPass
+#include "llvm/Transforms/Scalar/MergedLoadStoreMotion.h"
 // NaryReassociatePass
 #include "llvm/Transforms/Scalar/NaryReassociate.h"
 // NewGVNPass
 #include "llvm/Transforms/Scalar/NewGVN.h"
 // PartiallyInlineLibCallsPass
 #include "llvm/Transforms/Scalar/PartiallyInlineLibCalls.h"
-// PlaceSafepointsPass
-#include "llvm/Transforms/Scalar/PlaceSafepoints.h"
+// PGOMemOPSizeOpt
+#include "llvm/Transforms/Instrumentation/PGOInstrumentation.h"
 // ReassociatePass
 #include "llvm/Transforms/Scalar/Reassociate.h"
 // RegToMemPass
 #include "llvm/Transforms/Scalar/Reg2Mem.h"
-// ScalarizeMaskedMemIntrinPass
-#include "llvm/Transforms/Scalar/ScalarizeMaskedMemIntrin.h"
 // ScalarizerPass
 #include "llvm/Transforms/Scalar/Scalarizer.h"
 // SCCPPass
@@ -129,38 +126,159 @@
 #include "llvm/Transforms/Scalar/SeparateConstOffsetFromGEP.h"
 // SimplifyCFGPass
 #include "llvm/Transforms/Scalar/SimplifyCFG.h"
-// SinkingPass
-#include "llvm/Transforms/Scalar/Sink.h"
+// SLPVectorizerPass
+#include "llvm/Transforms/Vectorize/SLPVectorizer.h"
+// StraightLineStrengthReducePass
+#include "llvm/Transforms/Scalar/StraightLineStrengthReduce.h"
 // SpeculativeExecutionPass
 #include "llvm/Transforms/Scalar/SpeculativeExecution.h"
 // SROAPass
 #include "llvm/Transforms/Scalar/SROA.h"
-// StraightLineStrengthReducePass
-#include "llvm/Transforms/Scalar/StraightLineStrengthReduce.h"
-// StructurizeCFGPass
-#include "llvm/Transforms/Scalar/StructurizeCFG.h"
 // TailCallElimPass
 #include "llvm/Transforms/Scalar/TailRecursionElimination.h"
-// WarnMissedTransformationsPass
-#include "llvm/Transforms/Scalar/WarnMissedTransforms.h"
-// AddDiscriminatorsPass
-#include "llvm/Transforms/Utils/AddDiscriminators.h"
+
+// IndVarSimplifyPass
+#include "llvm/Transforms/Scalar/IndVarSimplify.h"
+// LICMPass
+#include "llvm/Transforms/Scalar/LICM.h"
+// LoopDeletionPass
+#include "llvm/Transforms/Scalar/LoopDeletion.h"
+// GuardWideningPass
+#include "llvm/Transforms/Scalar/GuardWidening.h"
+// LoopIdiomRecognizePass
+#include "llvm/Transforms/Scalar/LoopIdiomRecognize.h"
+// LoopInstSimplifyPass
+#include "llvm/Transforms/Scalar/LoopInstSimplify.h"
+// LoopInterchangePass
+#include "llvm/Transforms/Scalar/LoopInterchange.h"
+// LoopPredicationPass
+#include "llvm/Transforms/Scalar/LoopPredication.h"
+// LoopStrengthReducePass
+#include "llvm/Transforms/Scalar/LoopStrengthReduce.h"
+// LoopRotatePass
+#include "llvm/Transforms/Scalar/LoopRotation.h"
+// LoopSimplifyCFGPass
+#include "llvm/Transforms/Scalar/LoopSimplifyCFG.h"
+// LoopUnrollAndJamPass
+#include "llvm/Transforms/Scalar/LoopUnrollAndJamPass.h"
+// LoopVersioningLICMPass
+#include "llvm/Transforms/Scalar/LoopVersioningLICM.h"
+// SimpleLoopUnswitchPass
+#include "llvm/Transforms/Scalar/SimpleLoopUnswitch.h"
+
 
 #include <cctype>
 #include <string>
 #include <vector>
 
+
+
 using namespace llvm;
 
 
 void addPassByName(const std::string &pass_name, FunctionPassManager &FPM){
-    if(pass_name == "InstSimplifyPass")
-        return FPM.addPass(InstSimplifyPass());
-    else if(pass_name == "DSEPass")
-        return FPM.addPass(DSEPass());
-    else if(pass_name == "AggressiveInstCombinePass")
-        return FPM.addPass(AggressiveInstCombinePass());
+
+    // EntryExitInstrumenterPassは引数が必要 (bool PostInlining)
+    // SROAPassは引数が必要 (SROAOptions PreserveCFG)
+    // ここでSROAOptionsは実質bool
+    #define FUNCTION_PASS_LIST(v) \
+        v(ADCEPass)\
+        v(AddDiscriminatorsPass)\
+        v(AggressiveInstCombinePass)\
+        v(AlignmentFromAssumptionsPass)\
+        v(BDCEPass)\
+        v(BreakCriticalEdgesPass)\
+        v(CallSiteSplittingPass)\
+        v(ConstantHoistingPass)\
+        v(CoroElidePass)\
+        v(CorrelatedValuePropagationPass)\
+        v(DCEPass)\
+        v(DivRemPairsPass)\
+        v(DSEPass)\
+        v(EarlyCSEPass)\
+        v(FlattenCFGPass)\
+        v(Float2IntPass)\
+        v(GuardWideningPass)\
+        v(GVNPass)\
+        v(GVNHoistPass)\
+        v(GVNSinkPass)\
+        v(InferAddressSpacesPass)\
+        v(InjectTLIMappings)\
+        v(InstCombinePass)\
+        v(InstructionNamerPass)\
+        v(InstSimplifyPass)\
+        v(IRCEPass)\
+        v(JumpThreadingPass)\
+        v(LCSSAPass)\
+        v(LibCallsShrinkWrapPass)\
+        v(LoadStoreVectorizerPass)\
+        v(LoopDataPrefetchPass)\
+        v(LoopDistributePass)\
+        v(LoopFusePass)\
+        v(LoopLoadEliminationPass)\
+        v(LoopSimplifyPass)\
+        v(LoopSinkPass)\
+        v(LoopUnrollPass)\
+        v(LoopVectorizePass)\
+        v(LoopVersioningPass)\
+        v(LowerConstantIntrinsicsPass)\
+        v(LowerExpectIntrinsicPass)\
+        v(LowerGuardIntrinsicPass)\
+        v(LowerMatrixIntrinsicsPass)\
+        v(LowerWidenableConditionPass)\
+        v(LowerInvokePass)\
+        v(LowerSwitchPass)\
+        v(MemCpyOptPass)\
+        v(MergeICmpsPass)\
+        v(UnifyFunctionExitNodesPass)\
+        v(MergedLoadStoreMotionPass)\
+        v(NaryReassociatePass)\
+        v(NewGVNPass)\
+        v(PartiallyInlineLibCallsPass)\
+        v(PGOMemOPSizeOpt)\
+        v(ReassociatePass)\
+        v(RegToMemPass)\
+        v(ScalarizerPass)\
+        v(SCCPPass)\
+        v(SeparateConstOffsetFromGEPPass)\
+        v(SimplifyCFGPass)\
+        v(SLPVectorizerPass)\
+        v(StraightLineStrengthReducePass)\
+        v(SpeculativeExecutionPass)\
+        v(TailCallElimPass)\
+
+    // LICMPassは引数が必要 (LICMOptions Opts)
+    #define LOOP_PASS_LIST(v)\
+        v(IndVarSimplifyPass)\
+        v(LoopDeletionPass)\
+        v(GuardWideningPass)\
+        v(LoopIdiomRecognizePass)\
+        v(LoopInstSimplifyPass)\
+        v(LoopInterchangePass)\
+        v(LoopPredicationPass)\
+        v(LoopStrengthReducePass)\
+        v(LoopRotatePass)\
+        v(LoopSimplifyCFGPass)\
+        v(LoopUnrollAndJamPass)\
+        v(LoopVersioningLICMPass)\
+        v(SimpleLoopUnswitchPass)\
+
+    #define HANDLE_FUNCTION_PASS(PassClass) \
+        if(pass_name == #PassClass) return FPM.addPass(PassClass());
+
+    #define HANDLE_LOOP_PASS(PassClass) \
+        if(pass_name == #PassClass) return FPM.addPass(createFunctionToLoopPassAdaptor(PassClass(), false));
+
+    FUNCTION_PASS_LIST(HANDLE_FUNCTION_PASS)
+    LOOP_PASS_LIST(HANDLE_LOOP_PASS)
+
+    if(pass_name == "EntryExitInstrumenterPass_T") return FPM.addPass(EntryExitInstrumenterPass(true));
+    if(pass_name == "EntryExitInstrumenterPass_F") return FPM.addPass(EntryExitInstrumenterPass(false));
+    if(pass_name == "SROAPass_T") return FPM.addPass(SROAPass(SROAOptions::PreserveCFG));
+    if(pass_name == "SROAPass_F") return FPM.addPass(SROAPass(SROAOptions::ModifyCFG));
+    if(pass_name == "LICMPass") return FPM.addPass(createFunctionToLoopPassAdaptor(LICMPass(LICMOptions()), true));
     
+    #undef HANDLE_FUNCTION_PASS
 
     llvm::outs() << "Pass " << pass_name << " not found or not implemented\n";
     return;

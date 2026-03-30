@@ -3,13 +3,18 @@ forked from https://github.com/llvm/llvm-project
 
 関数単位で最適化を効かせる目的でLLVMを改変しています。現在制作途中なので随時更新されます/テスト用の出力があります
 
-Usage: `./build/bin/clang ... -mllvm -functino-opt-pass-option="FORMAT"`
-
-フォーマットは `FunctionName opt1 opt2 ... optN;FunctionName2 opt1 opt2 ... optN;`
+```
+clang SOURCE_CODE.c -c -emit-llvm -o IR_NO_OPT.bc
+opt IR_NO_OPT.bc -o IR_OPT.bc -passes='default<O2>,function-opt<"...">'
+(or clang IR_NO_OPT.bc --mllvm -funcion-opt-pass-option="..." -o IR_OPT.bc)
+clang IR_OPT -o a.out
+```
 
 効果を確かめたい時は`-O0 -Xclang -disable-O0-optnone`を使うとO0に指定した最適化のみを有効にできる
 
-現在対応しているものはInstSimplifyPass, DSEPass, AggressiveInstCombinePassのみ(to do 追加する)
+https://compilergym.com/llvm/index.html に記載されているパスのうち、function, loop-nest, loopのものに対応。
+
+パスの内容はpass_data.csvに記載、表計算とかのソフトで見てください。LLMを使って情報をまとめているため、内容に誤りがある可能性があります。
 
 ## 実装方法
 llvm/lib/Transforms/FunctionOpt にパスの形で実装
